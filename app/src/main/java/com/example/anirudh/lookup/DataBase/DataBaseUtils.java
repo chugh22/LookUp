@@ -14,4 +14,5 @@ public class DataBaseUtils {
     public static final String TYPE_INTEGER = " INTEGER " ;
     public static final String TYPE_TEXT = " TEXT " ;
     public static final String TYPE_INT_PK_AI = " INTEGER PRIMARY KEY AUTOINCREMENT " ;
+    public static final String TYPE_BOOLEAN  = " BOOLEAN " ;
 }

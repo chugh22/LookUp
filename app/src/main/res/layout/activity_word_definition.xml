@@ -21,15 +21,18 @@
     android:textStyle="bold"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
-        <ImageButton
-            android:layout_gravity="right"
+        <CheckBox
+            android:button="@android:drawable/btn_star"
+            android:gravity="right"
+            android:layout_gravity="left"
             android:background="@null"
             android:id="@+id/imageButtonStar"
             android:layout_width="125dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_star" />
+            android:layout_height="match_parent"
+            android:layout_weight="0.83" />
         <ImageButton
             android:id="@+id/imageButtonSpeaker"
             android:layout_gravity="center"

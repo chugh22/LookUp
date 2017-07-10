@@ -16,15 +16,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.anirudh.lookup.Adapters.DefinitionAdapter;
+import com.example.anirudh.lookup.Api.SingeltonApi;
 import com.example.anirudh.lookup.models.LexAndDef;
+import com.example.anirudh.lookup.models.Word;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class WordDefinitionAct extends AppCompatActivity {
 
@@ -32,8 +39,8 @@ public class WordDefinitionAct extends AppCompatActivity {
     TextView tvWord ;
     RecyclerView rvDefinitionList ;
     MediaPlayer mediaPlayer ;
-    ImageButton ibStar , ibSpeaker ;
-
+    ImageButton  ibSpeaker  , ibTranslations;
+    CheckBox ibStar ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,27 +51,28 @@ public class WordDefinitionAct extends AppCompatActivity {
 
         tvWord = (TextView)findViewById(R.id.tvWord) ;
         tvWord.setTypeface(myfont);
-        ibStar = (ImageButton)findViewById(R.id.imageButtonStar) ;
+        ibStar = (CheckBox)findViewById(R.id.imageButtonStar) ;
+        ibTranslations = (ImageButton)findViewById(R.id.imageButtonTranslate) ;
+        final String word = getIntent().getStringExtra("word") ;
+
+        ibSpeaker = (ImageButton)findViewById(R.id.imageButtonSpeaker) ;
+        final ArrayList<LexAndDef> lexAndDefs = new ArrayList<>() ;
+        final DefinitionAdapter adapter = new DefinitionAdapter(lexAndDefs ,this) ;
+        mediaPlayer = new MediaPlayer() ;
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC) ;
         ibStar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ibStar.setImageDrawable(getDrawable(R.drawable.ic_star_filled));
-                ibStar.setBackgroundResource(R.drawable.ic_star_filled);
+
             }
         });
-        ibSpeaker = (ImageButton)findViewById(R.id.imageButtonSpeaker) ;
-        ArrayList<LexAndDef> lexAndDefs = new ArrayList<>() ;
-        DefinitionAdapter adapter = new DefinitionAdapter(lexAndDefs ,this) ;
-        mediaPlayer = new MediaPlayer() ;
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC) ;
 
-        String word = getIntent().getStringExtra("word") ;
         tvWord.setText(word);
 
         rvDefinitionList = (RecyclerView)findViewById(R.id.rvListDefinitions) ;
         rvDefinitionList.setLayoutManager(new LinearLayoutManager(this));
 
-        for(int i =0 ;i<getIntent().getIntExtra("count" ,0) ; i++){
+        for(int i = 0 ;i<getIntent().getIntExtra("count" ,0) ; i++){
 
             LexAndDef defObj = new LexAndDef(
                     getIntent().getStringExtra("LexicalCategory"+i),
@@ -91,6 +99,48 @@ public class WordDefinitionAct extends AppCompatActivity {
         });
 
         rvDefinitionList.setAdapter(adapter);
+
+        ibTranslations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SingeltonApi.build().getTranslationApi().getTranslations(
+                        "en" ,
+                        word ,
+                        "es" ,
+                        MainActivity.Dictionary_App_Id ,
+                        MainActivity.Dictionary_App_Key).
+                        enqueue(new Callback<Word>() {
+                            @Override
+                            public void onResponse(Call<Word> call, Response<Word> response) {
+
+                                Log.d(TAG, "onResponse: " + response.body());
+                                if (response.body() != null) {
+                                    for (int i = 0; i < lexAndDefs.size(); i++) {
+                                        if (response.body().getResults()[0].getLexicalEntries()[i]
+                                                .getSenses()[0].
+                                                getExamples() != null) {
+                                            lexAndDefs.get(i).
+                                                    setExamples(response.body().getResults()[0].getLexicalEntries()[i].getEntries()[0]
+                                                            .getSenses()[0].getExamples()[0].getTranslations()[0].getText());
+                                        } else {
+                                            lexAndDefs.get(i).setExamples("No translations found");
+                                        }
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                }else{
+                                    Toast.makeText(WordDefinitionAct.this, "No translations found", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Word> call, Throwable t) {
+                                Toast.makeText(WordDefinitionAct.this, "On failure Translation", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
+            }
+        });
 
     }
 

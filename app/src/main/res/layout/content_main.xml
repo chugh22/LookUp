@@ -26,7 +26,7 @@
         android:layout_below="@+id/tvTodaysWordTextOnly"
         android:background="@color/color_holo_blue"
         android:textColor="@android:color/white"
-        android:text="vigilant"
+        android:text="constrain"
         android:textSize="40sp"
         android:gravity="center"/>
         <TextView
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvTodaysWord"
-            android:text="@string/todays_word_meaning"
+            android:text="compel"
             android:textSize="15sp"
             android:gravity="center"/>
     <TextView

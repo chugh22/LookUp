@@ -5,5 +5,4 @@ package com.example.anirudh.lookup.models
  */
 data class HistoryModel(var word : String ,
                         var lexicalCategory : String ,
-                        var definition : String ,
-                        var Examples : String)
+                        var definition : String , var Examples : String , var isstar: kotlin.Int)

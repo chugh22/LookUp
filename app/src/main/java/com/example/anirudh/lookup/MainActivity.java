@@ -1,9 +1,9 @@
 package com.example.anirudh.lookup;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.anirudh.lookup.Adapters.HistoryAdapter;
 import com.example.anirudh.lookup.Api.SingeltonApi;
 import com.example.anirudh.lookup.DataBase.DatabaseHelper;
@@ -27,9 +26,7 @@ import com.example.anirudh.lookup.DataBase.HistoryTable;
 import com.example.anirudh.lookup.models.HistoryModel;
 import com.example.anirudh.lookup.models.LexicalEntry;
 import com.example.anirudh.lookup.models.Word;
-
 import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     ArrayList<HistoryModel> historylist  ;
     RecyclerView rvRecentLookups ;
     HistoryAdapter adapter ;
+    boolean isStar = false ;
 
     TextView tvTodaysWord ;
     @Override
@@ -67,8 +65,20 @@ public class MainActivity extends AppCompatActivity
 
         Log.d(TAG, "onCreate: " + historylist.size());
         adapter = new HistoryAdapter(historylist , this) ;
+
         rvRecentLookups.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        adapter.setOnStarClickListener(new HistoryAdapter.onStarClickedListener() {
+            @Override
+            public void onStarClicked(boolean isStar , int pos) {
+                Log.d(TAG, "onStarClicked: " + isStar + pos);
+                HistoryModel h = historylist.get(pos) ;
+                h.setIsstar(isStar ? 1 : 0);
+                historylist.set(pos , h) ;
+                HistoryTable.updateStar(db , h.getWord() ,isStar);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         Typeface myfont = Typeface.createFromAsset(getAssets() ,"my_cursive_font.ttf" ) ;
         tvTodaysWord.setTypeface(myfont);
@@ -160,7 +170,7 @@ public class MainActivity extends AppCompatActivity
                                     response.body().getResults()[0].getLexicalEntries()[0].getLexicalCategory() ,
                                     response.body().getResults()[0].getLexicalEntries()[0].getEntries()[0].
                                             getSenses()[0].getDefinitions()[0] ,
-                                   example
+                                   example , 0
                             ));
                             Log.d(TAG, "onResponse: history list size"+historylist.size());
                             HistoryTable.addHistory(
@@ -169,7 +179,8 @@ public class MainActivity extends AppCompatActivity
                                     response.body().getResults()[0].getLexicalEntries()[0].getLexicalCategory() ,
                                     response.body().getResults()[0].getLexicalEntries()[0].getEntries()[0].
                                             getSenses()[0].getDefinitions()[0] ,
-                                    example
+                                    example ,
+                                    1
 
                             );
                             adapter.notifyDataSetChanged();
@@ -236,6 +247,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_starred) {
 
         } else if (id == R.id.nav_gitLink) {
+            String url = "https://github.com/Swoosh-ver22/LookUp" ;
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(i);
 
         }
 

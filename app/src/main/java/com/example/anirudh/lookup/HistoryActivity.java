@@ -38,6 +38,13 @@ public static final String TAG ="HISTORY ACTIVITY : " ;
 
         list = HistoryTable.getHistory(db) ;
         HistoryAdapter adapter = new HistoryAdapter(list , this) ;
+        adapter.setOnStarClickListener(new HistoryAdapter.onStarClickedListener() {
+            @Override
+            public void onStarClicked(boolean isStar, int pos) {
+
+                HistoryTable.updateStar(db , list.get(pos).getWord() , isStar);
+            }
+        });
         Log.d(TAG, "onCreate: " + list.size());
         rvHistory.setAdapter(adapter);
 

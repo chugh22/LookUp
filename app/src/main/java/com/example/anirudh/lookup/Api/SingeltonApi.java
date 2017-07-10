@@ -12,14 +12,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SingeltonApi {
     private static SingeltonApi singeltonApi ;
     private DictionaryApi dictionaryApi ;
-
+    private TranslationApi translationApi ;
     private SingeltonApi(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.Dictionary_BaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build() ;
         dictionaryApi= retrofit.create(DictionaryApi.class);
+        translationApi = retrofit.create(TranslationApi.class) ;
 
+    }
+
+    public TranslationApi getTranslationApi() {
+        return translationApi;
     }
 
     public DictionaryApi getDictionaryApi() {
