@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 import com.example.anirudh.lookup.Adapters.DefinitionAdapter;
 import com.example.anirudh.lookup.Api.SingeltonApi;
+import com.example.anirudh.lookup.DataBase.DatabaseHelper;
+import com.example.anirudh.lookup.DataBase.HistoryTable;
 import com.example.anirudh.lookup.Interface.RemoveCallBack;
 import com.example.anirudh.lookup.MainActivity;
 import com.example.anirudh.lookup.R;
@@ -46,6 +49,7 @@ public static final String TAG = "LookUp";
     RecyclerView rvDefinitionDialog ;
     ArrayList<LexAndDef> LexDefAl ;
     DefinitionAdapter adapter ;
+    DatabaseHelper databaseHelper ;
     public LookUp(Context context) {
         super(context);
         mContext = context ;
@@ -61,6 +65,8 @@ public static final String TAG = "LookUp";
         rvDefinitionDialog.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new DefinitionAdapter(LexDefAl , mContext) ;
         rvDefinitionDialog.setAdapter(adapter);
+        databaseHelper = new DatabaseHelper(mContext) ;
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase() ;
         tvWord.setText(wordSearch);
         Typeface myfont = Typeface.createFromAsset(mContext.getAssets() ,"my_cursive_font.ttf" ) ;
         tvWord.setTypeface(myfont);
@@ -95,11 +101,12 @@ public static final String TAG = "LookUp";
                             .getResults()[0]
                             .getLexicalEntries() ;
                     int count = 0 ;
+                    String example = "No example" ;
                     for(LexicalEntry entry : lexes){
                         if(count>4){
                             break ;
                         }
-                        String example = "No example" ;
+                         example = "No example" ;
                         if(entry.getEntries()[0].getSenses()[0].getExamples() != null){
                            example = entry.getEntries()[0].getSenses()[0].getExamples()[0].getText();
                         }
@@ -112,6 +119,12 @@ public static final String TAG = "LookUp";
 
                         count++;
                     }
+                    HistoryTable.addHistory(db , wordSearch ,
+                            response.body().getResults()[0].getLexicalEntries()[0].getLexicalCategory() ,
+                            response.body().getResults()[0].getLexicalEntries()[0].getEntries()[0].getSenses()[0].getDefinitions()[0] ,
+                           example ,
+                            0
+                            );
                     adapter.notifyDataSetChanged();
                 }
                 else{

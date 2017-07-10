@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WordDefinitionAct"></activity>
+        <activity android:name=".WordDefinitionAct" />
         <activity
             android:name=".TextSelectionActivity"
             android:label="LookUp"
@@ -36,7 +36,8 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".HistoryActivity"></activity>
+        <activity android:name=".HistoryActivity" />
+        <activity android:name=".StarredActivity"></activity>
     </application>
 
 </manifest>
