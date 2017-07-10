@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.anirudh.lookup.WordDefinitionAct">
+<TextView
+    android:id="@+id/tvWord"
+    android:background="@android:color/holo_blue_light"
+    android:textColor="@android:color/white"
+    android:gravity="center"
+    android:textSize="50sp"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:text="Word"
+    android:textStyle="bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_gravity="right"
+            android:background="@null"
+            android:id="@+id/imageButtonStar"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_star" />
+        <ImageButton
+            android:id="@+id/imageButtonSpeaker"
+            android:layout_gravity="center"
+            android:foregroundGravity="right"
+            android:background="@null"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_speaker2"/>
+        <ImageButton
+            android:id="@+id/imageButtonTranslate"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_translate"
+            android:background="@null"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:padding="8dp"
+        android:id="@+id/rvListDefinitions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+

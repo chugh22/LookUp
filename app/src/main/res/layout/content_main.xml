@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.anirudh.lookup.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+<TextView
+    android:padding="5dp"
+    android:id="@+id/tvTodaysWordTextOnly"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Today's Word"
+    android:textSize="30sp"
+    android:textStyle="italic"
+    android:textColor="@android:color/secondary_text_light"
+    />
+    <TextView
+        android:id="@+id/tvTodaysWord"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:layout_below="@+id/tvTodaysWordTextOnly"
+        android:background="@color/color_holo_blue"
+        android:textColor="@android:color/white"
+        android:text="vigilant"
+        android:textSize="40sp"
+        android:gravity="center"/>
+        <TextView
+            android:id="@+id/tvTodaysWordMeaning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTodaysWord"
+            android:text="@string/todays_word_meaning"
+            android:textSize="15sp"
+            android:gravity="center"/>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTodaysWordMeaning"
+        android:text="Recent Lookups"
+        android:textSize="20sp"
+        android:textStyle="italic|bold"
+        android:id="@+id/textView" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvRecentLookups"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
