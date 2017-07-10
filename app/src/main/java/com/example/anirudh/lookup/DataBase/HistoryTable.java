@@ -104,5 +104,43 @@ public static final String TAG = "History Table : " ;
         db.update(TABLE_NAME , contentValues , Columns.COL_WORD + "= ?" , new String[]{word}) ;
 
     }
+    public static ArrayList<HistoryModel> getStarred(SQLiteDatabase db){
+        ArrayList<HistoryModel> lists  = new ArrayList<>();
+        Cursor c = db.query(
+                TABLE_NAME ,
+                new String[]{
+                        Columns.COL_WORD ,
+                        Columns.COL_LEX ,
+                        Columns.COL_DEFINITION ,
+                        Columns.COL_EXAMPLES ,
+                        Columns.COL_IS_STAR
+                } ,
+                Columns.COL_IS_STAR + "= 1"
+                 ,
+                null ,
+                null,
+                null ,
+                Columns.COL_ID + " DESC"
+
+        )  ;
+        int[] indexes = new int[5] ;
+        indexes[0] = c.getColumnIndex(Columns.COL_WORD) ;
+        indexes[1] = c.getColumnIndex(Columns.COL_LEX) ;
+        indexes[2] = c.getColumnIndex(Columns.COL_DEFINITION) ;
+        indexes[3] = c.getColumnIndex(Columns.COL_EXAMPLES) ;
+        indexes[4] = c.getColumnIndex(Columns.COL_IS_STAR) ;
+        while(c.moveToNext()){
+            lists.add(
+                    new HistoryModel(
+                            c.getString(indexes[0]) ,
+                            c.getString(indexes[1]) ,
+                            c.getString(indexes[2]) ,
+                            c.getString(indexes[3]) ,
+                            c.getInt(indexes[4])
+                    )) ;
+        }
+        Log.d(TAG, "getHistory: " + lists.size());
+        return lists ;
+    }
 
 }

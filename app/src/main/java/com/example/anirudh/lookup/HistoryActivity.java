@@ -1,12 +1,14 @@
 package com.example.anirudh.lookup;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.anirudh.lookup.Adapters.HistoryAdapter;
 import com.example.anirudh.lookup.DataBase.DataBaseUtils;
@@ -26,10 +28,9 @@ public static final String TAG ="HISTORY ACTIVITY : " ;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarHistory) ;
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-        toolbar.setTitle("History");
+        Typeface myfont = Typeface.createFromAsset(getAssets() ,"my_cursive_font.ttf" ) ;
+        TextView tv = (TextView) findViewById(R.id.tvHistory);
+        tv.setTypeface(myfont);
         list = new ArrayList<>() ;
         dbhelper = new DatabaseHelper(this) ;
         db = dbhelper.getWritableDatabase() ;

@@ -245,6 +245,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_history) {
             startActivity(new Intent(MainActivity.this , HistoryActivity.class));
         } else if (id == R.id.nav_starred) {
+            startActivity(new Intent(MainActivity.this , StarredActivity.class));
 
         } else if (id == R.id.nav_gitLink) {
             String url = "https://github.com/Swoosh-ver22/LookUp" ;

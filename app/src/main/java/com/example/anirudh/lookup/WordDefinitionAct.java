@@ -1,6 +1,7 @@
 package com.example.anirudh.lookup;
 
 import android.app.ProgressDialog;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -22,7 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.anirudh.lookup.Adapters.DefinitionAdapter;
+import com.example.anirudh.lookup.Adapters.HistoryAdapter;
 import com.example.anirudh.lookup.Api.SingeltonApi;
+import com.example.anirudh.lookup.DataBase.DatabaseHelper;
+import com.example.anirudh.lookup.DataBase.HistoryTable;
 import com.example.anirudh.lookup.models.LexAndDef;
 import com.example.anirudh.lookup.models.Word;
 
@@ -37,10 +41,12 @@ public class WordDefinitionAct extends AppCompatActivity {
 
     public static final String TAG = "WordActivity" ;
     TextView tvWord ;
+    SQLiteDatabase db ;
     RecyclerView rvDefinitionList ;
     MediaPlayer mediaPlayer ;
     ImageButton  ibSpeaker  , ibTranslations;
     CheckBox ibStar ;
+    boolean result  = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,10 +66,14 @@ public class WordDefinitionAct extends AppCompatActivity {
         final DefinitionAdapter adapter = new DefinitionAdapter(lexAndDefs ,this) ;
         mediaPlayer = new MediaPlayer() ;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC) ;
+        DatabaseHelper databaseHelper = new DatabaseHelper(this) ;
+        db = databaseHelper.getWritableDatabase() ;
+
         ibStar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                HistoryTable.updateStar(db ,word ,result);
+                result = !result ;
             }
         });
 

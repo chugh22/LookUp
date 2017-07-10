@@ -65,6 +65,7 @@ public static final String TAG = "LookUp";
         rvDefinitionDialog.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new DefinitionAdapter(LexDefAl , mContext) ;
         rvDefinitionDialog.setAdapter(adapter);
+
         databaseHelper = new DatabaseHelper(mContext) ;
         final SQLiteDatabase db = databaseHelper.getWritableDatabase() ;
         tvWord.setText(wordSearch);
