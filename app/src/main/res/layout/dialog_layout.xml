@@ -29,11 +29,34 @@
          android:layout_height="30dp"
          android:src="@drawable/ic_cross"/>
 
+
  </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CheckBox
+            android:button="@android:drawable/btn_star"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:background="@null"
+            android:id="@+id/cbStarDialog"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+             />
+        <ImageButton
+            android:id="@+id/imageButtonSpeakerDialog"
+            android:layout_gravity="left"
+            android:background="@null"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_speaker2"/>
+    </LinearLayout>
+
 <LinearLayout
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <android.support.v7.widget.RecyclerView
         android:padding="5dp"
         android:id="@+id/rvDefinitionsDialog"

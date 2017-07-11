@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.Image;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +33,7 @@ import com.example.anirudh.lookup.models.LexAndDef;
 import com.example.anirudh.lookup.models.LexicalEntry;
 import com.example.anirudh.lookup.models.Word;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -50,6 +55,11 @@ public static final String TAG = "LookUp";
     ArrayList<LexAndDef> LexDefAl ;
     DefinitionAdapter adapter ;
     DatabaseHelper databaseHelper ;
+    ImageButton ibSpeaker ;
+    String audioUrl = "" ;
+    MediaPlayer mediaPlayer ;
+    CheckBox cbStar ;
+    boolean result  = true;
     public LookUp(Context context) {
         super(context);
         mContext = context ;
@@ -61,6 +71,8 @@ public static final String TAG = "LookUp";
         tvWord = (TextView) view.findViewById(R.id.tvWordDialog);
         ivClear = (ImageButton)view.findViewById(R.id.ibClearDialog) ;
         rvDefinitionDialog = (RecyclerView)view.findViewById(R.id.rvDefinitionsDialog) ;
+        ibSpeaker = (ImageButton)view.findViewById(R.id.imageButtonSpeakerDialog) ;
+        cbStar = (CheckBox)view.findViewById(R.id.cbStarDialog) ;
         LexDefAl = new ArrayList<>();
         rvDefinitionDialog.setLayoutManager(new LinearLayoutManager(mContext));
         adapter = new DefinitionAdapter(LexDefAl , mContext) ;
@@ -69,6 +81,8 @@ public static final String TAG = "LookUp";
         databaseHelper = new DatabaseHelper(mContext) ;
         final SQLiteDatabase db = databaseHelper.getWritableDatabase() ;
         tvWord.setText(wordSearch);
+        mediaPlayer = new MediaPlayer() ;
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC) ;
         Typeface myfont = Typeface.createFromAsset(mContext.getAssets() ,"my_cursive_font.ttf" ) ;
         tvWord.setTypeface(myfont);
         ivClear.setOnClickListener(new OnClickListener() {
@@ -127,6 +141,11 @@ public static final String TAG = "LookUp";
                             0
                             );
                     adapter.notifyDataSetChanged();
+                    audioUrl = response.body()
+                            .getResults()[0]
+                            .getLexicalEntries()[0]
+                            .getPronunciations()[0]
+                            .getAudioFile();
                 }
                 else{
                     Toast.makeText(
@@ -143,6 +162,85 @@ public static final String TAG = "LookUp";
                 Toast.makeText(mContext, "OnFailure : Window Manager", Toast.LENGTH_SHORT).show();
             }
         });
+        ibSpeaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(audioUrl != null) {
+                    new Player().execute(audioUrl);
+                }else{
+                    Toast.makeText(
+                            mContext,
+                            "Audio not available",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+
+            }
+        });
+        cbStar.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HistoryTable.updateStar(db ,wordSearch ,result);
+                result =!result ;
+            }
+        });
         return view ;
     }
+
+    class Player extends AsyncTask<String , Void , Boolean> {
+
+        private ProgressDialog progress ;
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                }
+            });
+            try {
+                mediaPlayer.setDataSource(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }catch (IllegalStateException e){
+                e.printStackTrace();
+            }
+            try {
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        public Player() {
+            this.progress = new ProgressDialog(mContext) ;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.progress.setMessage("Buffering ....");
+            this.progress.show() ;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(this.progress.isShowing()) {
+                this.progress.cancel();
+                this.progress.dismiss();
+            }
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.reset();
+            }
+            mediaPlayer.start();
+
+        }
+
+    }
+
+
 }
